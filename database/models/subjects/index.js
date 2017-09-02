@@ -19,3 +19,5 @@ const Subject = sequelize.define('subject', {
 	createdAt: false,
 	updatedAt: false
 });
+
+module.exports = Subject;

@@ -3,7 +3,7 @@ const Sequelize = require('sequelize');
 
 const Pupil = sequelize.define('pupil', {
 	id: {
-		type: Sequelize.INTERER,
+		type: Sequelize.INTEGER,
 		field: 'pupil_id',
 		primaryKey: true,
 		autoIncrement: true
@@ -21,7 +21,7 @@ const Pupil = sequelize.define('pupil', {
 		type: Sequelize.STRING
 	},
 	classId: {
-		type: Sequelize.INTERER,
+		type: Sequelize.INTEGER,
 		field: 'class_id'
 	}
 }, {

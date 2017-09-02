@@ -14,7 +14,7 @@ const Class = sequelize.define('class', {
 		type: Sequelize.INTEGER,
 	},
 	letter: {
-		TYPE: Sequelize.CHAR
+		type: Sequelize.CHAR
 	},
 	headTeacherId: {
 		type: Sequelize.INTEGER,
@@ -29,7 +29,7 @@ const Class = sequelize.define('class', {
 		field: 'graduation_date'
 	},
 	averageScore: {
-		type: Sequelize.FLOAT
+		type: Sequelize.INTEGER,
 		field: 'average_score'
 	},
 	pupilsNumber: {

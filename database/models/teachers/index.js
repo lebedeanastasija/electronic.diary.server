@@ -5,14 +5,14 @@ const Subject = require('../subjects');
 const Teacher = sequelize.define('teacher', {
 	id: {
 		type: Sequelize.INTEGER,
-		field: 'teacher_id'
+		field: 'teacher_id',
 		primaryKey: true,
 		autoIncrement: true
 	},
 	subjectId: {
 		type: Sequelize.INTEGER,
 		field: 'subject_id'
-	}
+	},
 	name: {
 		type: Sequelize.STRING
 	},
@@ -30,4 +30,4 @@ const Teacher = sequelize.define('teacher', {
 
 Teacher.belongsTo(Subject, { foreignKey: 'subject_id' });
 
-moule.exports = Teacher;
+module.exports = Teacher;
