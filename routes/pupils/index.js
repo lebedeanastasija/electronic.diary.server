@@ -38,7 +38,7 @@ router.get('/:id', (req, res, next) => {
 	if(!id) {
 		res.status(400);
 		return res.json({
-			data: "Invalid id"
+			data: "Invalid pupil"
 		});
 	}
 
