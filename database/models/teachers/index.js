@@ -9,6 +9,9 @@ const Teacher = sequelize.define('teacher', {
 		primaryKey: true,
 		autoIncrement: true
 	},
+    uid: {
+        type: Sequelize.STRING
+    },
 	subjectId: {
 		type: Sequelize.INTEGER,
 		field: 'subject_id'

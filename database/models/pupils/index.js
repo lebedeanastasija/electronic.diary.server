@@ -1,5 +1,6 @@
 const sequelize = require('../../index');
 const Sequelize = require('sequelize');
+const Class = require('../classes');
 
 const Pupil = sequelize.define('pupil', {
 	id: {
@@ -9,7 +10,7 @@ const Pupil = sequelize.define('pupil', {
 		autoIncrement: true
 	},
 	uid: {
-		type: Sequelize.BIGINT
+		type: Sequelize.STRING
 	},
 	name: {
 		type: Sequelize.STRING
@@ -29,5 +30,7 @@ const Pupil = sequelize.define('pupil', {
 	createdAt: false,
 	updatedAt: false
 });
+
+Pupil.belongsTo(Class, { foreignKey: 'class_id'});
 
 module.exports = Pupil;

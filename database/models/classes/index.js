@@ -42,7 +42,7 @@ const Class = sequelize.define('class', {
     updatedAt: false,
 });
 
-Class.hasMany(Pupil, { foreignKey: 'class_id', as: 'pupils'});
+
 Class.belongsTo(Teacher, { foreignKey: 'head_teacher_id' });
 
 module.exports = Class;

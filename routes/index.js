@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.use('/pupils', require('./pupils'));
 router.use('/classes', require('./classes'));
+router.use('/teachers', require('./teachers'));
 
 module.exports = router;

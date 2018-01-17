@@ -1,8 +1,9 @@
 const Pupil = require('../../database/models/pupils');
 const Class = require('../../database/models/classes');
+const Teacher = require('../../database/models/teachers');
 
 function getAll() {
-	return Pupil.findAll()
+	return Pupil.findAll({attributes: ['id', 'name', 'surname', 'patronymic', 'classId']})
 	.catch(err => Promise.reject({status: 500, message: err.message}));
 }
 
@@ -15,7 +16,7 @@ function getAllByClassId(classId) {
 }
 
 function getById(id) {
-	return Pupil.find({where: {id}, attributes: ['id', 'name', 'surname', 'patronymic', 'classId']})
+	return Pupil.find({where: {id}, attributes: ['id', 'name', 'surname', 'patronymic', 'classId'], include: [{model: Class, include: [{model: Teacher}]}]})
 	.catch(() => Promise.reject({status: 500, message: 'Error occured'}));
 }
 
