@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
+const _ = require('lodash');
 
 const pupilsService = require('../../services/pupils');
+const fileService = require('../../services/files');
 
 router.get('/', (req, res, next) => {
 	pupilsService.getAll()
@@ -88,7 +90,7 @@ router.post('/', (req, res, next) => {
 	let surname = req.body.surname;
 	let patronymic = req.body.patronymic;
 
-	if(!uid || !classId || !name || !surname) {
+	if(!uid || !name || !surname) {
 		res.status(400);
 		return res.json({
 			data: 'Invalid pupil data'
@@ -122,16 +124,36 @@ router.delete('/:id', (req, res, next) => {
 	pupilsService.remove(id)
 	.then(data => {
 		res.status(200);
-		res.json({
-			data
-		});
+		res.json({ data });
 	})
 	.catch(err => {
 		res.status(err.status);
-		res.json({
-			data: err.message
-		});
+		res.json({ data: err.message });
 	});
+});
+
+router.route('/:id/avatar/upload')
+.post(fileService.upload.array("files"), (req, res, next) => {
+	const PUPIL_ID = req.params.id;
+	if(!PUPIL_ID) {
+		console.error('Invalid pupil!');
+		res.status(400);
+		return res.json({data: "Invalid pupil!"});
+	}
+	const files = _.get(req, 'files', []);
+	console.log('Files objects from s3 multer: ', files);
+	return fileService.saveAvatar(files[0])
+	.then(data => {
+		return pupilsService.update({id: PUPIL_ID}, {avatarId: data.id})
+		.then(data => {
+            res.status(200);
+            res.json({data})
+		})
+	})
+	.catch(err => {
+		res.status(err.status);
+		res.json({ data: err.message })
+	})
 });
 
 module.exports = router;
