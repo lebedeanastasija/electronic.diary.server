@@ -1,4 +1,4 @@
 node_modules/*
 npm-debug.log
 .idea/*
-config/aws.s3.config
+config/aws.s3.config.js
