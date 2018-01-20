@@ -8,10 +8,10 @@ const Subject = sequelize.define('subject', {
 		primaryKey: true,
 		autoIncrement: true
 	},
-	name: {
+	abbreviation: {
 		type: Sequelize.STRING
 	},
-	description: {
+	title: {
 		type: Sequelize.STRING
 	}
 }, {

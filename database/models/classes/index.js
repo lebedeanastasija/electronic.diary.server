@@ -1,6 +1,5 @@
 const sequelize = require('../../index');
 const Sequelize = require('sequelize');
-const Pupil = require('../pupils');
 const Teacher = require('../teachers');
 
 const Class = sequelize.define('class', {
@@ -11,14 +10,14 @@ const Class = sequelize.define('class', {
 		autoIncrement: true
 	},
 	number: {
-		type: Sequelize.INTEGER,
-	},
+        type: Sequelize.ENUM('1', '2', '3', '4')
+    },
 	letter: {
-		type: Sequelize.CHAR
-	},
-	headTeacherId: {
+        type: Sequelize.ENUM('A', 'B', 'V', 'G', 'D', 'E')
+    },
+	teacherId: {
 		type: Sequelize.INTEGER,
-		field: 'head_teacher_id'
+		field: 'teacher_id'
 	},
 	enrollmentDate: {
 		type: Sequelize.DATE,
@@ -27,14 +26,6 @@ const Class = sequelize.define('class', {
 	graduationDate: {
 		type: Sequelize.DATE,
 		field: 'graduation_date'
-	},
-	averageScore: {
-		type: Sequelize.INTEGER,
-		field: 'average_score'
-	},
-	pupilsNumber: {
-		type: Sequelize.INTEGER,
-		field: 'pupils_number'
 	}
 }, {
     freezeTableName: true,
@@ -43,6 +34,6 @@ const Class = sequelize.define('class', {
 });
 
 
-Class.belongsTo(Teacher, { foreignKey: 'head_teacher_id' });
+Class.belongsTo(Teacher, { foreignKey: 'teacher_id' });
 
 module.exports = Class;
