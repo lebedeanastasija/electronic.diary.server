@@ -10,8 +10,18 @@ function getAll() {
 function getAllByClassId(classId) {
 	return Class.find({where: {id: classId}})
 	.then(classResult => {
-		let pupils = classResult.pupils;
-		Promise.resolve(pupils);
+		if(!classResult || !classResult.dataValues) {
+			return Promise.reject({status: 404, message: `Class with id=${classId} does not exist`});
+		}
+		let classInfo = Object.assign({}, classResult.dataValues);
+		return Pupil.findAll({ where: {classId: classInfo.id}, include: [{model: Avatar}] })
+		.then(pupilsResult => {
+			let result = {
+				class: classInfo,
+				pupils: pupilsResult
+			};
+			return Promise.resolve(result);
+		})
 	});
 }
 

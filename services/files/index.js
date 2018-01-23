@@ -21,32 +21,53 @@ const upload = multer({
             cb(null, {fieldName: file.fieldname});
         },
         key: function (req, file, cb) {
-            cb(null, Date.now().toString())
+            cb(null, `${Date.now().toString()}-${file.originalname}`)
         }
     })
 });
 
 function saveAvatar(avatarData) {
-    if(!(avatarData && avatarData.originalname && avatarData.location)) {
+    console.log(avatarData);
+    if(!(avatarData && avatarData.originalname && avatarData.key && avatarData.location)) {
         return Promise.reject({status: 400, message: "Invalid avatar data!"});
     }
-
     return new Promise((resolve, reject) => {
     Avatar.create({
-        fileName: avatarData.originalname,
+        originalName: avatarData.originalname,
+        name: avatarData.key,
         url: avatarData.location
     })
     .then(avatarResult => {
         const result = Object.assign({}, avatarResult.dataValues);
-
         resolve(result);
     })
     .catch(err => reject({status: 500, message: 'Error occured during saving pupil avatar'}));
     })
 }
 
+function getAvatar(id, res) {
+    return Avatar.findOne({ where: {id}})
+    .then(avatar => {
+        return download(avatar, res);
+    })
+}
+
+function download(file, res) {
+    const fileName = file.originalName;
+    res.attachment(fileName);
+
+    const options = {
+        Bucket: s3Bucket,
+        Key: file.name
+    };
+
+    const fileObject = s3.getObject(options).createReadStream();
+    fileObject.pipe(res);
+}
+
 module.exports = {
     upload,
-    saveAvatar
+    saveAvatar,
+    getAvatar
 };
 

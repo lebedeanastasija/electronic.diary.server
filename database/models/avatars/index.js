@@ -8,9 +8,12 @@ const Avatar = sequelize.define('avatar', {
         primaryKey: true,
         autoIncrement: true
     },
-    fileName: {
+    name: {
+        type: Sequelize.STRING
+    },
+    originalName: {
         type: Sequelize.STRING,
-        field: 'file_name'
+        field: 'original_name'
     },
     url: {
         type: Sequelize.STRING

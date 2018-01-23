@@ -21,7 +21,8 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/class/:classId', (req, res, next) => {
-	pupilsService.getAllByClassId()
+	let id = req.params.classId;
+	pupilsService.getAllByClassId(id)
 	.then(data => {
 		res.json({
 			data: data
@@ -154,6 +155,11 @@ router.route('/:id/avatar/upload')
 		res.status(err.status);
 		res.json({ data: err.message })
 	})
+});
+
+router.get('/avatar/:id', (req, res, next) => {
+	let id = req.params.id;
+	return fileService.getAvatar(id, res);
 });
 
 module.exports = router;
