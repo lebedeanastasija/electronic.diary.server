@@ -52,6 +52,17 @@ function getAvatar(id, res) {
     })
 }
 
+function getDownloadUrl(file) {
+    const options = {
+        Bucket: s3Bucket,
+        Key: file.name,
+        Expires: 3600
+    };
+
+    const url = s3.getSignedUrl('getObject', options);
+    return url;
+}
+
 function download(file, res) {
     const fileName = file.originalName;
     res.attachment(fileName);
@@ -67,7 +78,9 @@ function download(file, res) {
 
 module.exports = {
     upload,
+    download,
     saveAvatar,
-    getAvatar
+    getAvatar,
+    getDownloadUrl
 };
 

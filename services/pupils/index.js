@@ -14,11 +14,11 @@ function getAllByClassId(classId) {
 			return Promise.reject({status: 404, message: `Class with id=${classId} does not exist`});
 		}
 		let classInfo = Object.assign({}, classResult.dataValues);
-		return Pupil.findAll({ where: {classId: classInfo.id}, include: [{model: Avatar}] })
+		return Pupil.findAll({ where: {classId: classInfo.id} })
 		.then(pupilsResult => {
 			let result = {
 				class: classInfo,
-				pupils: pupilsResult
+				pupils: pupilsResult.map(pupil => pupil.dataValues)
 			};
 			return Promise.resolve(result);
 		})
@@ -35,13 +35,13 @@ function getByUID(uid) {
 	.catch(() => Promise.reject({status: 500, message: 'Error occured'}));
 }
 
-function create(uid, classId, name, surname, patronymic) {
+function create(uid, classId, name, surname, patronymic, avatarId) {
 	if(!uid || !classId || !name || !surname) {
 		return Promise.reject({status: 400, message: 'Invalid pupil data'});
 	}
 
 	return new Promise((resolve, reject) => {
-		Pupil.create({uid, classId, name, surname, patronymic})
+		Pupil.create({uid, classId, name, surname, patronymic, avatarId})
 		.then(pupilResult => {
 			const result = Object.assign({}, pupilResult.dataValues);
 			resolve(result);

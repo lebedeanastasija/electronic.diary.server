@@ -90,6 +90,7 @@ router.post('/', (req, res, next) => {
 	let name = req.body.name;
 	let surname = req.body.surname;
 	let patronymic = req.body.patronymic;
+	let avatarId = req.body.avatarId || 1;
 
 	if(!uid || !name || !surname) {
 		res.status(400);
@@ -98,7 +99,7 @@ router.post('/', (req, res, next) => {
 		});
 	}
 
-	pupilsService.create(uid, classId, name, surname, patronymic)
+	pupilsService.create(uid, classId, name, surname, patronymic, avatarId)
 	.then(data => {
 		res.status(200);
 		res.json({
