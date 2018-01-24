@@ -26,6 +26,25 @@ function getByUID(uid) {
     .catch(() => Promise.reject({status: 500, message: 'Error occurred'}));
 }
 
+function update(where, data) {
+    return new Promise((resolve, reject) => {
+        return Teacher.findOne({ where })
+            .then(teacher => {
+                teacher.update(data)
+                    .then(teacherResult => resolve(teacherResult))
+                    .catch(err => {
+                        console.error("Can not update teacher: \n",err);
+                        return reject({status: 500, message: err.message});
+                    })
+            })
+            .catch(err => {
+                console.error("Can not find teacher: \n",err);
+                return reject({status: 500, message: err.message});
+            })
+    })
+}
+
 module.exports = {
-    getByUID
+    getByUID,
+    update
 };

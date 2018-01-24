@@ -31,7 +31,7 @@ function getById(id) {
 }
 
 function getByUID(uid) {
-	return Pupil.find({where: {uid}, attributes: ['id', 'name', 'surname', 'patronymic', 'classId']})
+	return Pupil.find({where: {uid}, attributes: ['id', 'name', 'surname', 'patronymic', 'classId', 'avatarId'], include: [{model: Class}]})
 	.catch(() => Promise.reject({status: 500, message: 'Error occured'}));
 }
 
