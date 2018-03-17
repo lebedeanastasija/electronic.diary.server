@@ -85,7 +85,7 @@ router.get('/uid/:uid', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-	let uid = req.body.uid;
+	let uid = req.body.UID;
 	let classId = req.body.classId;
 	let name = req.body.name;
 	let surname = req.body.surname;
@@ -132,30 +132,6 @@ router.delete('/:id', (req, res, next) => {
 		res.status(err.status);
 		res.json({ data: err.message });
 	});
-});
-
-router.route('/:id/avatar/upload')
-.post(fileService.upload.array("files"), (req, res, next) => {
-	const PUPIL_ID = req.params.id;
-	if(!PUPIL_ID) {
-		console.error('Invalid pupil!');
-		res.status(400);
-		return res.json({data: "Invalid pupil!"});
-	}
-	const files = _.get(req, 'files', []);
-	console.log('Files objects from s3 multer: ', files);
-	return fileService.saveAvatar(files[0])
-	.then(data => {
-		return pupilsService.update({id: PUPIL_ID}, {avatarId: data.id})
-		.then(data => {
-            res.status(200);
-            res.json({data})
-		})
-	})
-	.catch(err => {
-		res.status(err.status);
-		res.json({ data: err.message })
-	})
 });
 
 router.get('/avatar/:id', (req, res, next) => {

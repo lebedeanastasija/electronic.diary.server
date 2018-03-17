@@ -26,9 +26,30 @@ const upload = multer({
     })
 });
 
+function uploadBase64Image(base64String, name) {
+
+    let buf = new Buffer(base64String.replace(/^data:image\/\w+;base64,/, ""),'base64');
+
+    let data = {
+        Bucket: s3Bucket,
+        Key: name,
+        Body: buf,
+        ContentEncoding: 'base64',
+        ContentType: 'image/jpeg'
+    };
+    s3.putObject(data, function(err, data){
+        if (err) {
+            console.error(err);
+            console.error('Error uploading image to aws s3: ', data);
+        } else {
+            console.log('Image was uploaded successfully to aws s3:', data);
+        }
+    });
+}
+
 function saveAvatar(avatarData) {
     console.log(avatarData);
-    if(!(avatarData && avatarData.originalname && avatarData.key && avatarData.location)) {
+    if(!(avatarData && avatarData.originalname && avatarData.key)) {
         return Promise.reject({status: 400, message: "Invalid avatar data!"});
     }
     return new Promise((resolve, reject) => {
@@ -81,6 +102,7 @@ module.exports = {
     download,
     saveAvatar,
     getAvatar,
-    getDownloadUrl
+    getDownloadUrl,
+    uploadBase64Image
 };
 
