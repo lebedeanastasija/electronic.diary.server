@@ -62,21 +62,19 @@ function remove(id) {
 }
 
 function update(where, data) {
-	return new Promise((resolve, reject) => {
-		return Pupil.findOne({ where })
-		.then(pupil => {
-			pupil.update(data)
-			.then(pupilResult => resolve(pupilResult))
-			.catch(err => {
-				console.error("Can not update pupil: \n",err);
-				return reject({status: 500, message: err.message});
-			})
-		})
-		.catch(err => {
-			console.error("Can not find pupil: \n",err);
-			return reject({status: 500, message: err.message});
-		})
-	})
+    console.log("Where: ", where);
+    return Pupil.findOne({ where })
+    .then(pupil => {
+        pupil.update(data)
+        .catch(err => {
+            console.error("Can not update pupil: \n",err);
+            return Promise.reject({status: 500, message: err.message});
+        })
+    })
+    .catch(err => {
+        console.error("Can not find pupil: \n",err);
+        return Promise.reject({status: 500, message: err.message});
+    })
 }
 
 module.exports = {
