@@ -21,7 +21,7 @@ const upload = multer({
             cb(null, {fieldName: file.fieldname});
         },
         key: function (req, file, cb) {
-            cb(null, `${Date.now().toString()}-${file.originalname}`)
+            cb(null, `avatar-${Date.now().toString()}.jpg`)
         }
     })
 });
@@ -49,14 +49,12 @@ function uploadBase64Image(base64String, name) {
 
 function saveAvatar(avatarData) {
     console.log(avatarData);
-    if(!(avatarData && avatarData.originalname && avatarData.key)) {
+    if(!(avatarData && avatarData.key)) {
         return Promise.reject({status: 400, message: "Invalid avatar data!"});
     }
     return new Promise((resolve, reject) => {
     Avatar.create({
-        originalName: avatarData.originalname,
-        name: avatarData.key,
-        url: avatarData.location
+        name: avatarData.key
     })
     .then(avatarResult => {
         const result = Object.assign({}, avatarResult.dataValues);
@@ -85,8 +83,7 @@ function getDownloadUrl(file) {
 }
 
 function download(file, res) {
-    const fileName = file.originalName;
-    res.attachment(fileName);
+    res.attachment(file.name);
 
     const options = {
         Bucket: s3Bucket,

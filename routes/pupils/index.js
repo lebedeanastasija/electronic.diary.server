@@ -85,6 +85,8 @@ router.get('/uid/:uid', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
+    //let { UID: uid, classId, name, surname, patronymic } = req.body;
+
 	let uid = req.body.UID;
 	let classId = req.body.classId;
 	let name = req.body.name;

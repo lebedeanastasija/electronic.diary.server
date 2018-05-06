@@ -1,16 +1,18 @@
 const sequelize = require('../../index');
 const Sequelize = require('sequelize');
 
-const Avatar = sequelize.define('avatar', {
+const MarkValue = sequelize.define('mark_value', {
     id: {
         type: Sequelize.INTEGER,
-        field: 'avatar_id',
+        field: 'value_id',
         primaryKey: true,
         autoIncrement: true
     },
-    name: {
-        type: Sequelize.STRING,
-        allowNull: false
+    text: {
+        type: Sequelize.STRING
+    },
+    number: {
+        type: Sequelize.INTEGER
     }
 }, {
     freezeTableName: true,
@@ -18,4 +20,4 @@ const Avatar = sequelize.define('avatar', {
     updatedAt: false,
 });
 
-module.exports = Avatar;
+module.exports = MarkValue;

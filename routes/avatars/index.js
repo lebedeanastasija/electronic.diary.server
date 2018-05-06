@@ -7,9 +7,8 @@ const pupilService = require('../../services/pupils');
 
 router.post('/pupil/:id', (req, res, next) => {
     const DATA = req.body.data;
-    const NAME = req.body.name;
     const PUPIL_ID = req.params.id;
-    const S3_NAME = `${NAME}-${Date.now().toString()}.jpg`;
+    const S3_NAME = `avatar-${Date.now().toString()}.jpg`;
 
     if(!PUPIL_ID) {
         console.error('Invalid pupil!');
@@ -18,7 +17,7 @@ router.post('/pupil/:id', (req, res, next) => {
     }
 
     fileService.uploadBase64Image(DATA, S3_NAME);
-    return fileService.saveAvatar({originalname: NAME, key: S3_NAME})
+    return fileService.saveAvatar({key: S3_NAME})
     .then(data => {
         return pupilService.update({id: PUPIL_ID}, {avatarId: data.id})
         .then(data => {
