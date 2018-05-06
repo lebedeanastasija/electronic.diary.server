@@ -1,9 +1,10 @@
 const sequelize = require('../../index');
 const Sequelize = require('sequelize');
+
 const Pupil = require('../pupils');
 const Schedule = require('../schedules');
 
-const PupilLesson = sequelize.define('m2m_pupil_lesson', {
+const Attendance = sequelize.define('m2m_attendance', {
     pupilId: {
         type: Sequelize.INTEGER,
         field: 'pupil_id',
@@ -18,12 +19,9 @@ const PupilLesson = sequelize.define('m2m_pupil_lesson', {
         type: Sequelize.DATE,
         primaryKey: true
     },
-    isPresent: {
-        type: Sequelize.BOOLEAN,
-        field: 'is_present'
-    },
     time: {
-        type: Sequelize.TIME
+        type: Sequelize.TIME,
+        allowNull: false
     },
 }, {
     freezeTableName: true,
@@ -31,7 +29,7 @@ const PupilLesson = sequelize.define('m2m_pupil_lesson', {
     updatedAt: false,
 });
 
-PupilLesson.belongsTo('Pupil', { foreignKey: 'pupil_id' });
-PupilLesson.belongsTo('Schedule', { foreignKey: 'schedule_id' });
+Attendance.belongsTo('Pupil', { foreignKey: 'pupil_id' });
+Attendance.belongsTo('Schedule', { foreignKey: 'schedule_id' });
 
-module.exports = PupilLesson;
+module.exports = Attendance;

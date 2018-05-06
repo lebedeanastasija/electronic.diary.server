@@ -8,12 +8,18 @@ const Subject = sequelize.define('subject', {
 		primaryKey: true,
 		autoIncrement: true
 	},
-	abbreviation: {
-		type: Sequelize.STRING
+	shortName: {
+		type: Sequelize.STRING,
+        field: 'short_name',
+		allowNull: false
 	},
-	title: {
-		type: Sequelize.STRING
-	}
+	name: {
+		type: Sequelize.STRING,
+        allowNull: false
+	},
+    description: {
+	    type: Sequelize.TEXT
+    }
 }, {
 	freezeTableName: true,
 	createdAt: false,
