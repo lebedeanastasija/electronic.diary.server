@@ -1,7 +1,9 @@
 const sequelize = require('../../index');
 const Sequelize = require('sequelize');
+
 const Class = require('../classes');
 const Avatar = require('../avatars');
+const Card = require('../cards');
 
 const Pupil = sequelize.define('pupil', {
 	id: {
@@ -10,14 +12,16 @@ const Pupil = sequelize.define('pupil', {
 		primaryKey: true,
 		autoIncrement: true
 	},
-	uid: {
+	/*uid: {
 		type: Sequelize.STRING
-	},
+	},*/
 	name: {
-		type: Sequelize.STRING
+		type: Sequelize.STRING,
+        allowNull: false
 	},
 	surname: {
-		type: Sequelize.STRING
+		type: Sequelize.STRING,
+        allowNull: false
 	},
 	patronymic: {
 		type: Sequelize.STRING
@@ -29,7 +33,11 @@ const Pupil = sequelize.define('pupil', {
 	avatarId: {
 		type: Sequelize.INTEGER,
 		field: 'avatar_id'
-	}
+	},
+    cardId: {
+	    type: Sequelize.INTEGER,
+        field: 'card_id'
+    }
 }, {
 	freezeTableName: true,
 	createdAt: false,
@@ -38,5 +46,6 @@ const Pupil = sequelize.define('pupil', {
 
 Pupil.belongsTo(Class, { foreignKey: 'class_id'});
 Pupil.belongsTo(Avatar, { foreignKey: 'avatar_id'});
+Pupil.hasOne(Card, { foreignKey: 'card_id'});
 
 module.exports = Pupil;
