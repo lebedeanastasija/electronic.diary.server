@@ -1,6 +1,8 @@
 const Pupil = require('../../models/index').pupil;
 const Class = require('../../models/index').class;
 const Teacher = require('../../models/index').teacher;
+const Avatar = require('../../models/index').avatar;
+const Card = require('../../models/index').card;
 
 function getAll() {
 	return Pupil.findAll({
@@ -31,45 +33,66 @@ function getById(id) {
 	return Pupil.find({
     where: {id},
     attributes: ['id', 'name', 'surname', 'patronymic', 'classId'],
-    include: [{model: Class, as: 'class',
-      include: [{model: Teacher, as: 'teacher'}]}]
+    include: [{model: Class, as: 'class', include: [{model: Teacher, as: 'teacher'}]},
+              {model: Avatar, as: 'avatar'}]
 	})
 	.catch(() => Promise.reject({status: 500, message: 'Error occured'}));
 }
 
 function getByUID(uid) {
-	return Pupil.find({
-    where: {uid},
-    attributes: ['id', 'name', 'surname', 'patronymic', 'classId', 'avatarId'],
-    include: [{model: Class, as: 'class'}]
-	})
-	.catch(() => Promise.reject({status: 500, message: 'Error occured'}));
+  return Card.findOne({
+    where: {uid, in_use: true},
+  })
+  .then(card => {
+    if(!card || !card.dataValues) {
+      return Promise.reject({status: 404, message: `Card is not registered in the system!`});
+    }
+
+    let cardInfo = Object.assign({}, card.dataValues);
+
+    return Pupil.find({
+      where: {cardId: cardInfo.id},
+      attributes: ['id', 'name', 'surname', 'patronymic', 'classId', 'avatarId'],
+      include: [{model: Class, as: 'class'}]
+    })
+    .catch(() => Promise.reject({status: 500, message: 'Error occured'}));
+  });
 }
 
-function create(uid, classId, name, surname, patronymic, avatarId) {
-	if(!uid || !classId || !name || !surname) {
+function create(cardId, classId, name, surname, patronymic, avatarId) {
+	if(!(name && surname)) {
 		return Promise.reject({status: 400, message: 'Invalid pupil data'});
 	}
 
+	avatarId = avatarId || 1;
+	cardId = classId || null;
+	classId = classId || null;
+
 	return new Promise((resolve, reject) => {
-		Pupil.create({uid, classId, name, surname, patronymic, avatarId})
+		Pupil.create({cardId, classId, name, surname, patronymic, avatarId})
 		.then(pupilResult => {
-			const result = Object.assign({}, pupilResult.dataValues);
-			resolve(result);
+			const pupil = Object.assign({}, pupilResult.dataValues);
+			resolve(pupil);
 		})
 		.catch(err => reject({status: 500, message: 'Error occured'}));
 	});
 }
 
 function remove(id) {
-	return new Promise((resolve, reject) => {
-		Pupil.findOne({where: {id}})
-		.then(pupil => {
-			pupil.destroy()
-			.then(() => resolve({}));
-		})
-		.catch(() => Promise.reject({ status: 500}))
-	});
+
+  return Pupil.findOne({where: {id}})
+  .then(pupil => {
+    let pupilInfo = Object.assign({}, pupil.dataValues);
+    pupil.destroy()
+    .then(() => {
+      if(!pupilInfo.cardId) {
+        return Promise.resolve();
+      }
+      return Card.update({in_use: false}, {id: pupilInfo.cardId});
+    });
+  })
+  .catch(() => Promise.reject({ status: 500}))
+
 }
 
 function update(where, data) {
