@@ -9,4 +9,6 @@ router.use('/teachers', require('./teachers'));
 router.use('/avatars', require('./avatars'));
 router.use('/marks', require('./marks'));
 
+router.use('/test', require('./test'));
+
 module.exports = router;

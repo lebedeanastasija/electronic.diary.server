@@ -1,4 +1,4 @@
-const Class = require('../../database/models/classes/');
+const Class = require('../../models/index').class;
 
 function getAll() {
 	return Class.findAll()
@@ -19,4 +19,4 @@ function getById(id) {
 module.exports = {
 	getAll,
 	getById
-}
+};

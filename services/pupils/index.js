@@ -1,9 +1,11 @@
-const Pupil = require('../../database/models/pupils');
-const Class = require('../../database/models/classes');
-const Teacher = require('../../database/models/teachers');
+const Pupil = require('../../models/index').pupil;
+const Class = require('../../models/index').class;
+const Teacher = require('../../models/index').teacher;
 
 function getAll() {
-	return Pupil.findAll({attributes: ['id', 'name', 'surname', 'patronymic', 'classId']})
+	return Pupil.findAll({
+    attributes: ['id', 'name', 'surname', 'patronymic', 'classId']
+	})
 	.catch(err => Promise.reject({status: 500, message: err.message}));
 }
 
@@ -26,12 +28,21 @@ function getAllByClassId(classId) {
 }
 
 function getById(id) {
-	return Pupil.find({where: {id}, attributes: ['id', 'name', 'surname', 'patronymic', 'classId'], include: [{model: Class, include: [{model: Teacher}]}]})
+	return Pupil.find({
+    where: {id},
+    attributes: ['id', 'name', 'surname', 'patronymic', 'classId'],
+    include: [{model: Class, as: 'class',
+      include: [{model: Teacher, as: 'teacher'}]}]
+	})
 	.catch(() => Promise.reject({status: 500, message: 'Error occured'}));
 }
 
 function getByUID(uid) {
-	return Pupil.find({where: {uid}, attributes: ['id', 'name', 'surname', 'patronymic', 'classId', 'avatarId'], include: [{model: Class}]})
+	return Pupil.find({
+    where: {uid},
+    attributes: ['id', 'name', 'surname', 'patronymic', 'classId', 'avatarId'],
+    include: [{model: Class, as: 'class'}]
+	})
 	.catch(() => Promise.reject({status: 500, message: 'Error occured'}));
 }
 
@@ -62,27 +73,27 @@ function remove(id) {
 }
 
 function update(where, data) {
-    console.log("Where: ", where);
-    return Pupil.findOne({ where })
-    .then(pupil => {
-        pupil.update(data)
-        .catch(err => {
-            console.error("Can not update pupil: \n",err);
-            return Promise.reject({status: 500, message: err.message});
-        })
-    })
+  console.log("Where: ", where);
+  return Pupil.findOne({ where })
+  .then(pupil => {
+    pupil.update(data)
     .catch(err => {
-        console.error("Can not find pupil: \n",err);
-        return Promise.reject({status: 500, message: err.message});
+      console.error("Can not update pupil: \n",err);
+      return Promise.reject({status: 500, message: err.message});
     })
+  })
+  .catch(err => {
+    console.error("Can not find pupil: \n",err);
+    return Promise.reject({status: 500, message: err.message});
+  })
 }
 
 module.exports = {
-    getAll,
-    getAllByClassId,
-    getById,
-    getByUID,
-    create,
-    remove,
+  getAll,
+  getAllByClassId,
+  getById,
+  getByUID,
+  create,
+  remove,
 	update
 };
