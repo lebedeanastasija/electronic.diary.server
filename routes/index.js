@@ -8,6 +8,7 @@ router.use('/classes', require('./classes'));
 router.use('/teachers', require('./teachers'));
 router.use('/avatars', require('./avatars'));
 router.use('/marks', require('./marks'));
+router.use('/admins', require('./administrators'));
 
 router.use('/test', require('./test'));
 
