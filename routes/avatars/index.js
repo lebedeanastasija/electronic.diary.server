@@ -16,6 +16,15 @@ router.post('/pupil/:id', (req, res, next) => {
         return res.json({data: "Invalid pupil!"});
     }
 
+    if(!DATA) {
+      console.log('Upload without image');
+      return pupilService.update({id: PUPIL_ID}, {avatarId: 1})
+      .then(data => {
+        res.status(200);
+        return res.json({data})
+      })
+    }
+
     fileService.uploadBase64Image(DATA, S3_NAME);
     return fileService.saveAvatar({key: S3_NAME})
     .then(data => {

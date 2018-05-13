@@ -6,7 +6,7 @@ const Card = require('../../models/index').card;
 
 function getAll() {
 	return Pupil.findAll({
-    attributes: ['id', 'name', 'surname', 'patronymic', 'classId']
+    attributes: ['id', 'name', 'surname', 'patronymic', 'classId', 'avatarId']
 	})
 	.catch(err => Promise.reject({status: 500, message: err.message}));
 }
@@ -88,7 +88,7 @@ function remove(id) {
       if(!pupilInfo.cardId) {
         return Promise.resolve();
       }
-      return Card.update({in_use: false}, {id: pupilInfo.cardId});
+      return Card.update({in_use: false}, {where: {id: pupilInfo.cardId}});
     });
   })
   .catch(() => Promise.reject({ status: 500}))
