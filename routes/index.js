@@ -9,6 +9,7 @@ router.use('/teachers', require('./teachers'));
 router.use('/avatars', require('./avatars'));
 router.use('/marks', require('./marks'));
 router.use('/admins', require('./administrators'));
+router.use('/subjects', require('./subjects'));
 
 router.use('/test', require('./test'));
 
