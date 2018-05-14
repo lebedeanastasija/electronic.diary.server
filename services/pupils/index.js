@@ -59,7 +59,7 @@ function getByUID(uid) {
   });
 }
 
-function create(cardId, classId, name, surname, patronymic, avatarId) {
+function create(name, surname, patronymic, cardId, classId, avatarId) {
 	if(!(name && surname)) {
 		return Promise.reject({status: 400, message: 'Invalid pupil data'});
 	}

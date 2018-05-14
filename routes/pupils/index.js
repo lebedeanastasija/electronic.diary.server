@@ -85,23 +85,16 @@ router.get('/uid/:uid', (req, res, next) => {
 });
 
 router.post('/', (req, res, next) => {
-    //let { UID: uid, classId, name, surname, patronymic } = req.body;
+  let { cardId, classId, avatarId, name, surname, patronymic } = req.body;
 
-	let uid = req.body.UID;
-	let classId = req.body.classId;
-	let name = req.body.name;
-	let surname = req.body.surname;
-	let patronymic = req.body.patronymic;
-	let avatarId = req.body.avatarId || 1;
-
-	if(!uid || !name || !surname) {
+	if(!name || !surname) {
 		res.status(400);
 		return res.json({
 			data: 'Invalid pupil data'
 		});
 	}
 
-	pupilsService.create(uid, classId, name, surname, patronymic, avatarId)
+	pupilsService.create(name, surname, patronymic, cardId, classId, avatarId)
 	.then(data => {
 		res.status(200);
 		res.json({

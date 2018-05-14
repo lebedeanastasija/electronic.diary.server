@@ -13,8 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
-    in_use: {
+    inUse: {
       type: DataTypes.BOOLEAN,
+      field: 'in_use',
       allowNull: false
     }
   }, {

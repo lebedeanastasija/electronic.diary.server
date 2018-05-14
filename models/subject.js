@@ -13,8 +13,9 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       unique: true
     },
-    short_name: {
+    shortName: {
       type: DataTypes.STRING(45),
+      field: 'short_name',
       allowNull: false,
       unique: true
     },
