@@ -19,10 +19,43 @@ function getAll() {
       {model: Teacher, as: 'teacher', attributes: ['name', 'surname', 'patronymic']},
       {model: WeekDay, as: 'weekDay', attributes:['shortName']}
     ]})
+  .then(schedules => {
+    let response = [];
+    schedules.forEach(schedule => response.push(_prepareSchedule(schedule)));
+    return Promise.resolve(response);
+  })
   .catch(err => {
     console.error(err);
     return Promise.reject({status: 500, message: 'Can not find schedules!'});
   });
+}
+
+function _prepareSchedule(schedule) {
+  let result = null;
+  if(!schedule) {
+    return result;
+  }
+
+  result = Object.assign({}, schedule.dataValues);
+
+  result.time = result.startTime.split(':').slice(0, 2).join(':') + '-' + result.endTime.split(':').slice(0, 2).join(':');
+  result.teacherName = result.teacher.surname + ' ' + result.teacher.name[0].toUpperCase() + '.';
+  if(result.teacher.patronymic) {
+    result.teacherName += result.teacher.patronymic[0].toUpperCase() + '.';
+  };
+  result.subjectName = result.subject.shortName;
+  result.roomName = result.room.name + ' каб.';
+  result.className = result.class.number.value + result.class.letter.value;
+  result.weekDay = result.weekDay.shortName;
+
+  delete result.startTime;
+  delete result.endTime;
+  delete result.teacher;
+  delete result.subject;
+  delete result.room;
+  delete result.class;
+
+  return result;
 }
 
 function getById(id) {
