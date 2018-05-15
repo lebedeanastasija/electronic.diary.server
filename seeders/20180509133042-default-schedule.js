@@ -99,6 +99,30 @@ module.exports = {
         week_day_id: 1,
         start_time: '19:00:00',
         end_time: '19:45:00'
+      },{
+        subject_id: 4,
+        class_id: 1,
+        room_id: 1,
+        teacher_id: 1,
+        week_day_id: 2,
+        start_time: '12:00:00',
+        end_time: '12:59:59'
+      },{
+        subject_id: 3,
+        class_id: 1,
+        room_id: 1,
+        teacher_id: 1,
+        week_day_id: 2,
+        start_time: '13:00:00',
+        end_time: '13:59:00'
+      },{
+        subject_id: 1,
+        class_id: 1,
+        room_id: 1,
+        teacher_id: 1,
+        week_day_id: 2,
+        start_time: '14:00:00',
+        end_time: '14:59:00'
       }], {});
   },
 

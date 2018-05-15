@@ -30,6 +30,54 @@ function getAll() {
   });
 }
 
+function getById(id) {
+  return Schedule.find({where: {id}})
+  .catch(() => Promise.reject({status: 500, message: 'Error occurred'}));
+}
+
+function getByTeacherId(teacherId) {
+  let date = new Date();
+  time = date.toTimeString();
+  return Schedule.find({
+    where: {teacherId},
+    include: [{model: Subject, as: 'subject'},
+              {model: Class, as: 'class'},
+              {model: Teacher, as: 'teacher'}]
+  })
+  .catch(() => Promise.reject({status: 500, message: 'Error occurred'}));
+}
+
+function getCurrentByTeacher(teacherId) {
+  let date = new Date();
+  let time = date.toTimeString().split(' ')[0];
+  let weekDay = date.getDay();
+  console.log('WEEK DAY: ', weekDay);
+
+  return Schedule.findOne({
+    where: {
+      startTime: {$lte: time},
+      endTime: {$gt: time},
+      teacherId,
+      weekDayId: weekDay
+    },
+    include: [
+      {model: Subject, as: 'subject', attributes: ['shortName']},
+      {model: Class, as: 'class', attributes: ['id', 'numberId', 'letterId'], include: [
+        {model: ClassNumber, as: 'number', attributes: ['value']},
+        {model: ClassLetter, as: 'letter', attributes: ['value']}
+      ]},
+      {model: StudyRoom, as: 'room', attributes: ['name']},
+      {model: Teacher, as: 'teacher', attributes: ['name', 'surname', 'patronymic']},
+      {model: WeekDay, as: 'weekDay', attributes:['shortName']}
+    ]
+  })
+  .then(schedule => Promise.resolve(_prepareSchedule(schedule)))
+  .catch(err => {
+    console.error(err);
+    return Promise.reject({status: 500, message: 'Can not find lesson!'});
+  });
+}
+
 function _prepareSchedule(schedule) {
   let result = null;
   if(!schedule) {
@@ -58,25 +106,9 @@ function _prepareSchedule(schedule) {
   return result;
 }
 
-function getById(id) {
-  return Schedule.find({where: {id}})
-  .catch(() => Promise.reject({status: 500, message: 'Error occurred'}));
-}
-
-function getByTeacherId(teacherId) {
-  let date = new Date();
-  time = date.toTimeString();
-  return Schedule.find({
-    where: {teacherId},
-    include: [{model: Subject, as: 'subject'},
-              {model: Class, as: 'class'},
-              {model: Teacher, as: 'teacher'}]
-  })
-  .catch(() => Promise.reject({status: 500, message: 'Error occurred'}));
-}
-
 module.exports = {
   getAll,
   getById,
-  getByTeacherId
+  getByTeacherId,
+  getCurrentByTeacher
 };

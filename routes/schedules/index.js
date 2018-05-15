@@ -18,4 +18,26 @@ router.get('/', (req, res, next) => {
   });
 });
 
+router.get('/current/teacher/:id', (req, res, next) => {
+  let id = req.params.id;
+
+  if(!id) {
+    res.status(400);
+    return res.json({data: 'Invalid teacher!'});
+  }
+
+  return scheduleService.getCurrentByTeacher(id)
+  .then(data => {
+    res.json({
+      data: data
+    });
+  })
+  .catch(err => {
+    res.status(err.status);
+    res.json({
+      data: err.message
+    })
+  });
+});
+
 module.exports = router;

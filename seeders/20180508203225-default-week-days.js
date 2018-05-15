@@ -5,31 +5,31 @@ module.exports = {
     return queryInterface.bulkInsert('week_day', [{
       name: 'Понедельник',
       short_name: 'Пн',
-      number: 0
+      number: 1
     },{
       name: 'Вторник',
       short_name: 'Вт',
-      number: 1
+      number: 2
     },{
       name: 'Среда',
       short_name: 'Ср',
-      number: 2
+      number: 3
     },{
       name: 'Четверг',
       short_name: 'Чт',
-      number: 3
+      number: 4
     },{
       name: 'Пятница',
       short_name: 'Пт',
-      number: 4
+      number: 5
     },{
       name: 'Суббота',
       short_name: 'Сб',
-      number: 5
+      number: 6
     },{
       name: 'Воскресенье',
       short_name: 'Вс',
-      number: 6
+      number: 7
     }], {});
   },
 
