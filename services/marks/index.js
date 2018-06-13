@@ -4,6 +4,7 @@ const Schedule = require('../../models/index').schedule;
 const Subject = require('../../models/index').subject;
 const MarkType = require('../../models/index').mark_type;
 const MarkValue = require('../../models/index').mark_value;
+const Attendance = require('../../models/index').m2m_attendance;
 
 function getAll() {
   return Mark.findAll()
@@ -42,11 +43,27 @@ function create(typeId, valueId, pupilId, date, scheduleId, subjectId) {
   .catch(err => Promise.reject({status: 500, message: 'Error occured'}));
 }
 
+function createAttendance(pupilId, scheduleId, date, time) {
+  if(!(pupilId && scheduleId && time)) {
+    return Promise.resolve({status: 400, message: 'Invalid attendance data'});
+  }
+  let attendance = {
+    pupilId,
+    scheduleId,
+    time,
+    date: date || new Date()
+  };
+
+  return Attendance.create(attendance)
+  .catch(err => Promise.reject({status: 500, message: 'Error occured'}));
+}
+
 
 module.exports = {
   getAll,
   getByPupilId,
-  create/*,
+  create,
+  createAttendance/*,
   remove,
   update*/
 };

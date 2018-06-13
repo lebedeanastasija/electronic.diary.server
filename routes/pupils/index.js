@@ -77,6 +77,7 @@ router.get('/uid/:uid', (req, res, next) => {
 		});
 	})
 	.catch(err => {
+	  console.log(err);
 		res.status(err.status);
 		res.json({
 			data: err.message
@@ -94,16 +95,16 @@ router.post('/', (req, res, next) => {
 		});
 	}
 
-	pupilsService.create(name, surname, patronymic, cardId, classId, avatarId)
+	return pupilsService.create(name, surname, patronymic, cardId, classId, avatarId)
 	.then(data => {
 		res.status(200);
-		res.json({
+		return res.json({
 			data
 		});
 	})
 	.catch(err => {
 		res.status(err.status);
-		res.json({
+		return res.json({
 			data: err.message
 		});
 	});

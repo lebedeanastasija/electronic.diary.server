@@ -1,6 +1,8 @@
 const Teacher = require('../../models/index').teacher;
 const Subject = require('../../models/index').subject;
 const Class = require('../../models/index').class;
+const ClassNumber = require('../../models/index').class_number;
+const ClassLetter = require('../../models/index').class_letter;
 const Card = require('../../models/index').card;
 
 function getAll() {
@@ -29,10 +31,17 @@ function getByUID(uid) {
       include: [{ model: Subject, as: 'subject'}
       ]})
     .then(teacherResult => {
-      return Class.find({ where: {teacherId: teacherResult.id} })
+      return Class.find({
+        where: {teacherId: teacherResult.id},
+        include: [
+          {model: ClassNumber, as: 'number', attributes: ['value']},
+          {model: ClassLetter, as: 'letter', attributes: ['value']}
+        ]
+      })
       .then(classResult => {
         let teacher = Object.assign({},teacherResult.dataValues);
         teacher.class = classResult;
+        teacher.className = teacher.class.number.value + teacher.class.letter.value;
         return Promise.resolve(teacher);
       })
       .catch(err => {

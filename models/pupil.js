@@ -21,12 +21,12 @@ module.exports = (sequelize, DataTypes) => {
     },
     classId: {
       type: DataTypes.INTEGER(10).UNSIGNED,
-      field: 'class_id',
-      unique: true
+      field: 'class_id'
     },
     cardId: {
       type: DataTypes.INTEGER(10).UNSIGNED,
-      field: 'card_id'
+      field: 'card_id',
+      unique: true
     },
     avatarId: {
       type: DataTypes.INTEGER(10).UNSIGNED,

@@ -44,6 +44,7 @@ router.get('/pupil/:pupilId', (req, res, next) => {
 router.post('/', (req, res, next) => {
     let {typeId, valueId, pupilId, scheduleId, subjectId} = req.body;
 
+    console.log(req.body);
     if(!(typeId && valueId && pupilId && (scheduleId || subjectId))) {
         res.status(400);
         return res.json({
@@ -58,7 +59,7 @@ router.post('/', (req, res, next) => {
         .then(data => {
             console.log("[Create pupil] - result:\n", data);
             res.status(200);
-            res.json({
+            return res.json({
                 data: data
             });
         })

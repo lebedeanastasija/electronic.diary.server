@@ -3,6 +3,10 @@ const Class = require('../../models/index').class;
 const Teacher = require('../../models/index').teacher;
 const Avatar = require('../../models/index').avatar;
 const Card = require('../../models/index').card;
+const Attendance = require('../../models/index').m2m_attendance;
+
+const scheduleService = require('../schedules');
+const markService = require('../marks');
 
 function getAll() {
 	return Pupil.findAll({
@@ -55,7 +59,48 @@ function getByUID(uid) {
       attributes: ['id', 'name', 'surname', 'patronymic', 'classId', 'avatarId'],
       include: [{model: Class, as: 'class'}]
     })
-    .catch(() => Promise.reject({status: 500, message: 'Error occured'}));
+    .then(pupil => {
+      if(!pupil) {
+        return Promise.resolve({status: 404, message: "Can not find pupil."})
+      }
+      let p = {
+        id: pupil.id,
+        name: pupil.name,
+        surname: pupil.surname,
+        patronymic: pupil.patronymic,
+        classId: pupil.classId || null,
+        avatarId: pupil.avatarId || null,
+        cardId: pupil.cardId || null,
+        attendance: null
+      };
+      return scheduleService.getCurrentByClass(pupil.classId)
+      .then(lesson => {
+        if(!lesson) {
+          return Promise.resolve(p);
+        }
+        let date = new Date();
+        let time = date.toTimeString().split(' ')[0];
+        return Attendance.findOne({
+          where: {pupilId: pupil.id, scheduleId: lesson.id, date}
+        })
+        .then(att => {
+          if(att) {
+            p.attendance = true;
+            return Promise.resolve(p);
+          }
+
+          return markService.createAttendance(pupil.id, lesson.id, date, time)
+          .then(() => {
+            p.attendance = true;
+            return Promise.resolve(p);
+          })
+        });
+      })
+      .catch(err => {
+        console.error(err);
+        return Promise.resolve(pupil);
+      })
+    });
   });
 }
 

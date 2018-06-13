@@ -62,13 +62,15 @@ function getCurrentByTeacher(teacherId) {
     },
     include: [
       {model: Subject, as: 'subject', attributes: ['shortName']},
-      {model: Class, as: 'class', attributes: ['id', 'numberId', 'letterId'], include: [
+      {
+        model: Class, as: 'class', attributes: ['id', 'numberId', 'letterId'], include: [
         {model: ClassNumber, as: 'number', attributes: ['value']},
         {model: ClassLetter, as: 'letter', attributes: ['value']}
-      ]},
+      ]
+      },
       {model: StudyRoom, as: 'room', attributes: ['name']},
       {model: Teacher, as: 'teacher', attributes: ['name', 'surname', 'patronymic']},
-      {model: WeekDay, as: 'weekDay', attributes:['shortName']}
+      {model: WeekDay, as: 'weekDay', attributes: ['shortName']}
     ]
   })
   .then(schedule => Promise.resolve(_prepareSchedule(schedule)))
@@ -78,7 +80,68 @@ function getCurrentByTeacher(teacherId) {
   });
 }
 
-function _prepareSchedule(schedule) {
+function getCurrentByClass(classId) {
+  let date = new Date();
+  let time = date.toTimeString().split(' ')[0];
+  let weekDay = date.getDay();
+  console.log('WEEK DAY: ', weekDay);
+
+  return Schedule.findOne({
+    where: {
+      startTime: {$lte: time},
+      endTime: {$gt: time},
+      classId,
+      weekDayId: weekDay
+    }
+  })
+  .catch(err => {
+    console.error(err);
+    return Promise.reject({status: 500, message: 'Can not find lesson!'});
+  });
+}
+
+function getDayByTeacher(teacherId) {
+    let date = new Date();
+    let weekDay = date.getDay();
+    console.log('WEEK DAY: ', weekDay);
+
+  return Schedule.findAll({
+    where: {
+      teacherId: Number(teacherId),
+      weekDayId: weekDay
+    },
+    include: [
+      {model: Subject, as: 'subject', attributes: ['shortName']},
+      {model: Class, as: 'class', attributes: ['id', 'numberId', 'letterId'], include: [
+        {model: ClassNumber, as: 'number', attributes: ['value']},
+        {model: ClassLetter, as: 'letter', attributes: ['value']}
+      ]},
+      {model: StudyRoom, as: 'room', attributes: ['name']},
+      {model: Teacher, as: 'teacher', attributes: ['name', 'surname', 'patronymic']},
+      {model: WeekDay, as: 'weekDay', attributes:['shortName', 'name']}
+    ]
+  })
+  .then(schedules => {
+    let preparedSchedules = [];
+    console.log(schedules);
+    if(!schedules.length) {
+      return WeekDay.findOne({
+        where: {number: weekDay}
+      })
+      .then(day => Promise.resolve([{weekDay: day.name}]))  ;
+    }
+    schedules.forEach(sch => {
+      preparedSchedules.push(_prepareSchedule(sch, true));
+    });
+    return Promise.resolve(preparedSchedules);
+  })
+  .catch(err => {
+    console.error(err);
+    return Promise.reject({status: 500, message: 'Can not find lesson for today!'});
+  });
+}
+
+function _prepareSchedule(schedule, fullDay) {
   let result = null;
   if(!schedule) {
     return result;
@@ -90,11 +153,11 @@ function _prepareSchedule(schedule) {
   result.teacherName = result.teacher.surname + ' ' + result.teacher.name[0].toUpperCase() + '.';
   if(result.teacher.patronymic) {
     result.teacherName += result.teacher.patronymic[0].toUpperCase() + '.';
-  };
+  }
   result.subjectName = result.subject.shortName;
   result.roomName = result.room.name + ' каб.';
   result.className = result.class.number.value + result.class.letter.value;
-  result.weekDay = result.weekDay.shortName;
+  result.weekDay = fullDay ? result.weekDay.name : result.weekDay.shortName;
 
   delete result.startTime;
   delete result.endTime;
@@ -106,9 +169,13 @@ function _prepareSchedule(schedule) {
   return result;
 }
 
+
+
 module.exports = {
   getAll,
   getById,
   getByTeacherId,
-  getCurrentByTeacher
+  getCurrentByTeacher,
+  getCurrentByClass,
+  getDayByTeacher
 };
